@@ -4,6 +4,7 @@ from datetime import datetime
 
 import timeago
 from peewee import PostgresqlDatabase, SqliteDatabase, ProgrammingError
+from playhouse.shortcuts import ReconnectMixin
 from aiocryptocurrency.coins import Coin, SUPPORTED_COINS
 from aiocryptocurrency.coins.nero import Wownero, Monero
 from aiocryptocurrency.coins.firo import Firo
@@ -27,7 +28,17 @@ coin: Optional[dict] = None
 discourse = Discourse()
 proposal_task = None
 
-database = PostgresqlDatabase(
+
+class ReconnectingPGDatabase(ReconnectMixin, PostgresqlDatabase):
+    def __init__(self, *args, **kwargs):
+        import peewee as pw
+        super(ReconnectingPGDatabase, self).__init__(*args, **kwargs)
+        self._reconnect_errors = {
+            pw.InterfaceError: ["connection already closed"]
+        }
+
+
+database = ReconnectingPGDatabase(
     settings.DB_NAME,
     autorollback=True,
     user=settings.DB_USER,
