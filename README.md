@@ -1,5 +1,7 @@
 # cFunding
 
+![](https://i.imgur.com/rxaEBzp.png)
+
 A simple cryptocurrency funding system made with:
 
 - Python
@@ -42,19 +44,19 @@ Some options in `settings.py` need changing:
 
 ### Discourse (optional)
 
-Discourse, the forum software, has an API key we can generate:
+To auto-post on Discourse, navigate to the Discourse API keys page (you need to be a system admin):
 
 ```text
 [YourSite]/admin/api/keys
 ```
 
-[Some handy Discourse options to change](https://meta.discourse.org/t/global-rate-limits-and-throttling-in-discourse/78612):
+This will include the comments from Discourse on the proposal page and turn on automatic Discourse topic creation 
+when a proposal is posted.
+
+Important: [some handy Discourse options to change](https://meta.discourse.org/t/global-rate-limits-and-throttling-in-discourse/78612):
 
 - Increase `DISCOURSE_MAX_ADMIN_API_REQS_PER_MINUTE`
 - Increase `DISCOURSE_MAX_REQS_PER_IP_PER_10_SECONDS`
-
-This will include the comments from Discourse on the proposal page and turn on automatic Discourse topic creation 
-when a proposal is posted.
 
 ### Coin configuration (Firo)
 
@@ -75,10 +77,6 @@ And set `settings.py` options:
 - Set `COIN_NAME` to `'firo'`
 - Set `COIN_RPC_PORT` to `18888`
 - Set `COIN_RPC_AUTH` to `'admin,admin'`
-
-## History
-
-The development of cfunding is a joint effort by [Firo](https://firo.org/) and [Wownero](https://wownero.org/)
 
 ## License
 
