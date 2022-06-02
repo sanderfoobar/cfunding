@@ -1,0 +1,36 @@
+{% macro tx_item(tx) %}
+  {% set receiving = tx.direction == 'in' %}
+
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingOne">
+      <button class="accordion-button collapsed" type="button" data-coreui-toggle="collapse" data-coreui-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+        <span class="badge {% if receiving %} bg-success {% else %} bg-firo {% endif %} rounded-pill">
+          {% if receiving %}+{% else %}-{% endif %}
+          {{tx.amount}} {{coin.ticker}}
+        </span>
+        {% if rates.rate %}
+        <span style="margin-left:10px;" class="badge bg-dark rounded-pill">${{tx.amount | to_usd }} USD</span>
+        {% endif %}
+      </button>
+    </h2>
+
+    <div class="accordion-collapse collapse" id="collapseOne" aria-labelledby="headingOne" data-coreui-parent="#accordionTxs">
+      <div class="accordion-body m-0 p-0">
+
+        <ul class="list-group">
+          <li class="list-group-item">Amount: <code>{{tx.amount}} {{coin.ticker}}</code></li>
+          <li class="list-group-item">TXID: <code>{{tx.txid}}</code></li>
+
+          {% if receiving %}
+            <li class="list-group-item">Blockheight: <code>{{tx.blockheight}}</code></li>
+            <li class="list-group-item">Confirmations: <code>{{tx.confirmations}}</code></li>
+          {% else %}
+            <li class="list-group-item">Date: <code>{{tx.date | dt_human}}</code></li>
+          {% endif %}
+        </ul>
+
+      </div>
+    </div>
+  </div>
+
+{% endmacro %}

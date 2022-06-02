@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<!--
+* CoreUI - Free Bootstrap Admin Template
+* @version v4.0.2
+* @link https://coreui.io
+* Copyright (c) 2021 creativeLabs Łukasz Holeczek
+* Licensed under MIT (https://coreui.io/license)
+-->
+<!-- Breadcrumb-->
+{% set root_page = path == '/' %}
+
+<html lang="en">
+  <head>
+    {% include 'includes/head.html' %}
+    <title>
+    FCS - {% block title %}{% endblock %}
+    </title>
+
+    {% block stylesheets %}{% endblock stylesheets %}
+  </head>
+
+  <body>
+    {# include 'includes/sidebar.html' #}
+
+    <div class="wrapper d-flex flex-column min-vh-100 bg-light">
+      {% include 'includes/navigation.html' %}
+
+      {% block content %}{% endblock content %}
+
+      {% include 'includes/footer.html' %}
+    </div>
+
+    {% include 'includes/scripts.html' %}
+
+    <script src="{{ url_for('static', filename='/admin/vendors/@coreui/utils/js/coreui-utils.js') }}"></script>
+    <script src="{{ url_for('static', filename='/js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='/js/easymd/easymde.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='/admin/js/jquery.js') }}"></script>
+    {% block javascripts %}{% endblock javascripts %}
+  </body>
+</html>

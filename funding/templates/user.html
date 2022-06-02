@@ -1,0 +1,132 @@
+{% extends "layouts/base.html" %}
+{% block title %} User {% endblock %}
+
+{% block content %}
+
+{% from "includes/proposals.html" import proposals_table with context %}
+
+<div class="body flex-grow-1 px-3">
+  <div class="container-lg">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for message in messages %}
+
+      <div class="alert alert-warning alert-dismissible fade show mt-3" role="alert">
+        {{message}}
+        <button class="btn-close" type="button" data-coreui-dismiss="alert" aria-label="Close"></button>
+      </div>
+
+      {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    {% if u %}
+    <div class="row mb-3">
+      <div class="col-lg-12">
+        <h3>username: <span style="font-weight:bold;">{{u.username}}</span></h3>
+
+        {% if user.is_moderator %}
+        <p>
+        {% if u.is_admin %}
+          This user is an admin.
+        {% elif u.is_moderator %}
+          This user is a moderator.
+        {% elif u.role == UserRole.user %}
+          This user is a regular user.
+        {% endif %}
+
+        {% if not u.enabled %}
+          Currently banned.
+        {% endif %}
+        </p>
+
+        <div class="row mt-4 mb-3">
+          <div class="col-lg-12">
+            {% if user.is_admin %}
+            <h5>Admin options</h5>
+            {% elif user.is_moderator %}
+            <h5>Moderator options</h5>
+            {% endif %}
+            <div class="row">
+              <div class="col-md-6">
+
+              {% if user.is_moderator %}
+                <form method="POST" action="{{ url_for('bp_auth.user_enabled_toggle', name=u.username) }}">
+                  <button type="submit" class="mb-2 btn btn-sm {% if u.enabled %}btn-danger{% else %}btn-success{% endif %} btn-sm">
+                    {% if u.enabled %}
+                      ban user
+                    {% else %}
+                      unban user
+                    {% endif %}
+                  </button>
+                </form>
+              {% endif %}
+
+              {% if user.is_admin %}
+                {% set is_moderator = u.role == UserRole.moderator %}
+                {% set is_admin = u.role == UserRole.admin %}
+
+                <form method="POST" action="{{ url_for('bp_auth.user_moderator_toggle', name=u.username) }}">
+                  <button type="submit" class="mb-2 btn btn-sm {% if is_moderator %}btn-danger{% else %}btn-success{% endif %} btn-sm">
+                    {% if not is_moderator %}
+                      make moderator
+                    {% else %}
+                      remove moderator status
+                    {% endif %}
+                  </button>
+                </form>
+
+                <form method="POST" action="{{ url_for('bp_auth.user_admin_toggle', name=u.username) }}">
+                  <button type="submit" class="mb-2 btn btn-sm {% if is_admin %}btn-danger{% else %}btn-success{% endif %} btn-sm">
+                    {% if not is_admin %}
+                      make admin
+                    {% else %}
+                      remove admin
+                    {% endif %}
+                  </button>
+                </form>
+              {% endif %}
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+        {% endif %}
+
+        <h5>Proposals made by this user</h5>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-lg-12">
+        {% if proposals %}
+          {{proposals_table(proposals)}}
+        {% else %}
+          This user has not submitted any proposals yet.
+        {% endif %}
+      </div>
+    </div>
+    {% else %}
+    <div class="row mb-3">
+      <div class="col-lg-12">
+        <h4>Whoops.</h4>
+        No user found by that name.
+      </div>
+    </div>
+    {% endif %}
+
+    <a href=" {{ url_for('bp_routes.users_page') }} ">
+      <button type="button" class="btn btn-success">
+        <svg class="icon">
+          <use xlink:href="/static/admin/vendors/@coreui/icons/svg/free.svg#cil-arrow-left"></use>
+        </svg>
+        Back to users
+      </button>
+    </a>
+
+  </div>
+</div>
+
+<!-- /.container -->
+{% endblock %}

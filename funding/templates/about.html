@@ -1,0 +1,45 @@
+{% extends "layouts/base.html" %}
+{% block title %} Proposals {% endblock %}
+
+{% block content %}
+
+<div class="body flex-grow-1 px-3">
+  <div class="container-lg">
+    <div class="row">
+      <div class="col-md-12">
+
+        <div class="card">
+          <div class="card-header">About</div>
+          <div class="card-body">
+            <p>
+             A simple funding system made with:
+            </p>
+
+            <ul>
+                <li>Python</li>
+                <li>Quart microframework</li>
+                <li>Postgres</li>
+                <li>Redis</li>
+            </ul>
+
+            <p>
+              We do not keep access logs or install tracking cookies.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script src="{{ url_for('static', filename='/admin/vendors/@coreui/utils/js/coreui-utils.js') }}"></script>
+<script src="{{ url_for('static', filename='/admin/js/main.js') }}"></script>
+
+{% endblock javascripts %}

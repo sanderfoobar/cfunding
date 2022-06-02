@@ -1,0 +1,332 @@
+{% extends "layouts/base.html" %}
+{% block title %} View proposal {% endblock %}
+{% from 'proposals/comment.html' import comment_entry %}
+
+{% block content %}
+
+{% set raised_sum = proposal.raised.sum() %}
+
+<div class="body flex-grow-1 px-3">
+  <div class="container-lg proposal_view">
+    {% if proposal.status == ProposalStatus.disabled %}
+    <div class="col-md-6 mb-5">
+      <h3>Heads up!</h3>
+      <div class="alert alert-warning">
+        This proposal has been <b>disabled</b>. It did not pass community
+        approval or otherwise did not make the cut.
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="row row-header">
+      <div class="col-md-12 mb-1">
+        <h1>
+          {{proposal.title}}
+          <small>by
+            <a href="{{ url_for('bp_routes.user_page', name=proposal.user.username) }}">
+            {{proposal.user.username}}
+            </a>
+          </small>
+        </h1>
+      </div>
+
+      <div class="col-md-12 mb-3">
+        <span style="border-radius:8px !important;font-size:20px;" class="badge bg-firo rounded-pill">
+          Goal: {{proposal.funds_target_human}} {{coin.ticker}}
+          {% if rates.rate %}
+            (${{proposal.funds_target | to_usd }})
+          {% endif %}
+        </span>
+
+        <span style="border-radius:8px !important;font-size:16px;margin-left: 4px;" class="badge bg-dark rounded-pill">
+          {{ ProposalCategory.to_string(proposal.category.value) }}
+        </span>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xl-8 col-md-12">
+        <div class="card card-proposal mb-4">
+          <div class="card-header">
+            Proposal
+
+            <a class="float-end" href="{{ url_for('bp_proposals.edit', slug=proposal.slug) }}">
+              <button style="margin-left: 8px;" type="button" class="btn btn-sm btn-dark">
+
+                <svg class="icon">
+                  <use xlink:href="/static/admin/vendors/@coreui/icons/svg/free.svg#cil-pencil"></use>
+                </svg>
+
+                Edit
+              </button>
+            </a>
+
+            <span style="display: block;" class="badge bg-firo ms-auto float-end">
+            {% if proposal.status.name == 'disabled' %}
+                Disabled
+            {% elif proposal.status.name == 'idea' %}
+                Seeking community approval
+            {% elif proposal.status.name == 'funding_required' %}
+                Seeking funding
+            {% elif proposal.status.name == 'wip' %}
+                Work in Progress
+            {% elif proposal.status.name == 'completed' %}
+                Completed
+            {% endif %}
+            </span>
+          </div>
+          <div class="card-body">
+            {{proposal.html | safe}}
+          </div>
+
+          <div class="card-footer">
+            <b>Added at</b>: <span title="{{ proposal.created | dt_ago }}">{{ proposal.created | dt_human }}</span>
+            <span class="m-1 divider">|</span>
+            {% if settings.VIEW_COUNTER %}
+              <b>Views</b>: {{ proposal.views }}
+            {% endif %}
+            <span class="m-1 divider">|</span>
+            <b>Comments</b>: 0
+            <span class="m-1 divider">|</span>
+            <b>Raw</b>: <a href="{{ url_for('bp_proposals.view_markdown', slug=proposal.slug) }}">markdown</a>
+          </div>
+        </div>
+
+        {% if not proposal.comments or proposal.status.name == 'completed' %}
+          {% if proposal.discourse_topic_link %}
+          <a class="mb-3 d-block" href="{{ proposal.discourse_topic_link }}">
+            <button type="button" class="btn btn-success">
+              View proposal discussion on {{ settings.DISCOURSE_DOMAIN }}
+            </button>
+          </a>
+          {% endif %}
+        {% endif %}
+
+        {% if proposal.comments and proposal.discourse_topic_link %}
+
+          <div class="card mb-4">
+            <div class="card-header">
+              Recent comments
+
+              <a class="float-end" target="_blank" href="{{ proposal.discourse_topic_link }}">
+                <button style="margin-left: 8px;" type="button" class="btn btn-sm btn-success">
+
+                  <svg class="icon">
+                    <use xlink:href="/static/admin/vendors/@coreui/icons/svg/free.svg#cil-people"></use>
+                  </svg>
+
+                  Go to {{ settings.DISCOURSE_DOMAIN }}
+                </button>
+              </a>
+            </div>
+            <div class="card-body p-4">
+
+              {% for c in proposal.comments|reverse %}
+                <div class="row">
+                  <div class="col">
+                    <div class="d-flex flex-start">
+                      <img class="rounded-circle shadow-1-strong me-3" src="{{ c.avatar }}" alt="avatar" width="48" height="48" />
+                      <div class="flex-grow-1 flex-shrink-1">
+                        <div>
+                          <div class="d-flex justify-content-between align-items-center">
+                            <p class="mb-1">
+                              {{ c.author }} <span class="small">- {{ c.created_at | dt_ago }}</span>
+                            </p>
+                          </div>
+
+                          {{ c.markdown_to_html }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+
+            </div>
+          </div>
+
+        {% endif %}
+
+        {% if proposal.events %}
+        <div class="card mb-4">
+          <div class="card-header">Events</div>
+          <div class="card-body m-0 p-0">
+            <ul class="list-group">
+              {% for event in proposal.events %}
+              <li class="proposal-event-item list-group-item d-flex justify-content-between align-items-center">
+                {{ event.message }}
+                <span class="badge bg-secondary rounded-pill">{{ event.created | dt_human}}</span>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="col-xl-4 col-md-12">
+        <div class="card mb-4">
+          <div class="card-header">Meta</div>
+          <div class="card-body">
+            <img alt="firo" style="width:100%;" class="mb-3" src="{{ url_for('static', filename='firo-header.png') }}"/>
+
+            <div class="row">
+              {% if proposal.status.value > ProposalStatus.idea.value and proposal.status.value != ProposalStatus.completed.value %}
+              <div class="col-lg-12">
+                  {{ proposal.raised | length }} individual contribution(s)
+
+                  {% if raised_sum > 0 %}
+                  <small>
+                      <a style="margin:4px;" href="#card-txs">Details...</a>
+                  </small>
+                  {% endif %}
+
+                  <div class="progress">
+                      <div class="progress-bar progress-monero progress-bar-striped" style="width: {% if raised_sum > 0 %}100{% else %}0{% endif %}.0%;">
+                      </div>
+                  </div>
+                  <hr>
+              </div>
+
+              <div class="col-lg-12">
+                {{ proposal.raised.sum() | round(10) }} {{ coin.ticker }} Raised
+
+                {% if proposal.raised_remaining > 0 %}
+                  (<b>{{ proposal.raised_remaining | round(10) }} {{ coin.ticker }} remaining</b>)
+                {% else %}
+                  ({{proposal.raised_pct}}%)
+                {% endif %}
+
+                <div class="progress">
+                    <div class="progress-bar progress-warning progress-bar-striped" style="width: {{ proposal.raised_pct }}%;">
+                    </div>
+                </div>
+                <hr>
+              </div>
+
+              <div class="col-lg-12">
+                  {{ proposal.spent.sum('out') }} {{coin.ticker}} Paid out <small>({{proposal.spent_pct}}%)</small>
+                  <div class="progress">
+                      <div class="progress-bar progress-warning progress-bar-striped" style="width: {{proposal.spent_pct}}%;">
+                      </div>
+                  </div>
+                  <hr>
+              </div>
+
+              <div class="col-lg-12 mb-4">
+                {{proposal.spent_remaining | round(10) }} {{coin.ticker}}
+
+                {% if proposal.spent_remaining > 0 %}
+                  {% set remaining_pct = 100 %}
+                   Available for payout :-)
+                {% else %}
+                  {% set remaining_pct = 0 %}
+                  Available for payout
+                {% endif %}
+                  <div class="progress">
+                      <div class="progress-bar progress-warning progress-bar-striped" style="width: {{ remaining_pct }}%;">
+                      </div>
+                  </div>
+              </div>
+
+              {% elif proposal.status.value == ProposalStatus.completed.value %}
+                <div class="col-lg-12">
+                  This proposal is completed. See the forum discussion thread for more information.
+                </div>
+              {% endif %}
+
+              {% if proposal.donations_enabled %}
+                <div class="col-lg-12 d-flex justify-content-center">
+                  <h3>Donate</h3>
+                </div>
+
+                <div class="col-lg-12 mb-3 d-flex justify-content-center">
+                  <img class="mb-4" id="qr_image" alt="qr" src="{{ url_for('bp_routes.utils_qr_image', address=proposal.crypto_address_donation) }}"/>
+                </div>
+
+                <div class="col-lg-12 mb-4">
+                  <div class="donation_address">{{proposal.crypto_address_donation}}</div>
+                </div>
+              {% elif proposal.status == ProposalStatus.wip %}
+                <div class="col-lg-12 mb-1">
+                  <span class="text-dark">
+                    This proposal is
+                    {% if proposal.raised_pct >= 100 %}
+                    fully funded and
+                    {% endif %}
+                    in development.
+                  </span>
+                </div>
+              {% elif proposal.status == ProposalStatus.idea %}
+                <div class="col-lg-12 mb-1">
+                  <span class="text-dark">
+                    This proposal is being discussed. Donation details will
+                    appear once the proposal is moved to the next stage.
+                  </span>
+                </div>
+              {% elif proposal.status == ProposalStatus.disabled %}
+                <div class="col-lg-12 mb-1">
+                  <span class="text-dark">
+                    This proposal is disabled.
+                  </span>
+                </div>
+              {% endif %}
+            </div>
+
+          </div>
+        </div>
+
+        {% if raised_sum > 0 %}
+        <div id="card-txs" class="card mb-5 card-transactions">
+          <div class="card-header">Transactions
+
+            {% if user.is_admin %}
+            <a class="float-end" href="{{ url_for('bp_proposals.funds', slug=proposal.slug) }}">
+              <button style="margin-left: 8px;" type="button" class="btn btn-sm btn-dark">
+
+                <svg class="icon">
+                  <use xlink:href="/static/admin/vendors/@coreui/icons/svg/free.svg#cil-money"></use>
+                </svg>
+
+                Manage
+              </button>
+            </a>
+            {% endif %}
+
+          </div>
+          <div class="card-body p-0">
+
+            {% from "includes/transactions.html" import tx_item with context %}
+            <div class="accordion" id="accordionTxs">
+
+              {% for tx in proposal.transactions %}
+                {{ tx_item(tx) }}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+
+  </div>
+</div>
+<style>
+  .row-header small {
+    font-size: 16px;
+  }
+  .comment_area {
+    margin-left: 6px;
+  }
+  .EasyMDEContainer {
+    width: 100%;
+  }
+</style>
+{% endblock content %}
+
+{% block javascripts %}
+<script>
+  let proposal_uuid = "{{ proposal.uuid }}";
+</script>
+{% endblock javascripts %}

@@ -1,0 +1,107 @@
+.homepage .homepage-cards a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.table-proposals a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.alert-warning {
+  border: 1px solid #d1d1d1;
+}
+
+img.emoji {
+  width:16px;
+  height:16px;
+}
+
+.breadcrumb-item a, .breadcrumb-item a:visited {
+  text-decoration: none;
+  color: inherit;
+}
+
+.markdown h1>a, .markdown h2>a, .markdown h3>a, .markdown h4>a, .markdown h5>a {
+  text-decoration: inherit;
+  color: inherit;
+}
+
+table a:hover {
+  color: inherit;
+}
+
+.markdown blockquote {
+  margin-left: 1.4rem;
+  font-style: italic;
+}
+
+a {
+  text-decoration: none
+}
+
+.progress-bar {
+  background-color: #ab2b2b;
+}
+
+#qr_image {
+  filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.15));
+}
+
+.card {
+  box-shadow: 5px 5px 5px 0 rgba(0,0,0,0.05);
+}
+
+.card-header span.badge {
+    font-size: 16px;
+}
+
+.card-header .btn-sm {
+  padding: 0.15rem 0.5rem;
+}
+
+a {
+  color: #ab2b2b;
+}
+
+a:hover {
+  color: #661e1e;
+}
+
+.bg-firo {
+  background: #ab2b2b;
+  color: white;
+}
+
+.donation_address {
+  background: #f0f0f0;
+  border: 0;
+  border-radius: 6px;
+  padding-top: 14px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+  resize: none;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+li.proposal-event-item {
+  border-radius: 0;
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+}
+
+.proposal_view .card-proposal .card-footer span.divider {
+  color: #c5c5c5;
+}
+
+.card-transactions .badge {
+  font-size: 0.9rem;
+  border-radius: 0 !important;
+}
+
+.card-transactions .accordion-button {
+  padding: 0.8rem 1.25rem;
+}

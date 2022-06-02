@@ -1,0 +1,29 @@
+{% extends "layouts/base-fullscreen.html" %}
+{% block title %} Error 500 {% endblock %} 
+
+{% block content %}
+
+<div class="bg-light min-vh-100 d-flex flex-row align-items-center">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="clearfix">
+          <h1 class="float-start display-3 me-4">
+            {% if code %}{{code}}{% else %}500{% endif %}
+          </h1>
+          <h4 class="pt-3">Oh noes. There is a problem.</h4>
+            <p class="text-medium-emphasis">
+              {% if message %}{{message}}{% else %}
+              The page you are looking for is temporarily unavailable.
+              {% endif %}
+            </p>
+        </div>
+        <a href="{{ url_for('bp_routes.root') }}">
+          <button class="btn btn-dark" type="button">Back to homepage</button>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

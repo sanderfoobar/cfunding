@@ -1,0 +1,78 @@
+{% extends "layouts/base-fullscreen.html" %}
+
+{% block title %} Register {% endblock %}
+
+{% block content %}
+
+<div class="bg-light min-vh-100 d-flex flex-row align-items-center">
+  <div class="container-lg">
+    <div class="row justify-content-center">
+
+      <div class="col-lg-8">
+        <div class="card-group d-block d-md-flex row">
+
+          <div class="card col-md-7 p-4 mb-0">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-4">
+                  <img alt="" class="mb-3" src="https://firo.org/img/firo-ecosystem.svg"/>
+                  {% with messages = get_flashed_messages() %}
+                  {% if messages %}
+                    <div class="text-danger">
+                      {% for message in messages %}
+                        <p class="card-text mb-2">{{message}}</p>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                  {% endwith %}
+                </div>
+
+                <div class="col-md-8">
+                  <form method="POST" action="{{ url_for('bp_auth.register_post') }}">
+                    <h1>Register</h1>
+                    <p class="text-medium-emphasis">Register a new account.</p>
+                    <div class="input-group mb-3"><span class="input-group-text">
+                        <svg class="icon">
+                          <use xlink:href="/static/admin/vendors/@coreui/icons/svg/free.svg#cil-user"></use>
+                        </svg></span>
+                      <input class="form-control" value="{{username}}" name="username" type="text" placeholder="Username">
+                    </div>
+                    <div class="input-group mb-4"><span class="input-group-text">
+                        <svg class="icon">
+                          <use xlink:href="/static/admin/vendors/@coreui/icons/svg/free.svg#cil-lock-locked"></use>
+                        </svg></span>
+                      <input class="form-control" value="{{password}}" name="password" type="password" placeholder="Password">
+                    </div>
+                    <div class="input-group mb-3"><span class="input-group-text">
+                        <svg class="icon">
+                          <use xlink:href="/static/admin/vendors/@coreui/icons/svg/free.svg#cil-user"></use>
+                        </svg></span>
+                      <input class="form-control" value="{{email}}" name="email" type="email" placeholder="Email">
+                    </div>
+                    <img class="mb-3" src="{{url_for('bp_routes.utils_captcha')}}"/>
+                    <div class="input-group mb-3"><span class="input-group-text">
+                        <svg class="icon">
+                          <use xlink:href="/static/admin/vendors/@coreui/icons/svg/free.svg#cil-text"></use>
+                        </svg></span>
+                      <input class="form-control" name="captcha" type="captcha" placeholder="Captcha">
+                    </div>
+                    <div class="row">
+                      <div class="col-12">
+                        <a href="#">
+                          <button class="btn float-end btn-dark px-4" type="submit">Register</button>
+                        </a>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

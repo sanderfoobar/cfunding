@@ -1,0 +1,57 @@
+import os
+cwd = os.path.dirname(os.path.realpath(__file__))
+
+
+def bool_env(val):
+    return val is True or (isinstance(val, str) and (val.lower() == 'true' or val == '1'))
+
+
+DEBUG = bool_env(os.environ.get("DEBUG", False))
+HOST = os.environ.get("HOST", "127.0.0.1")
+DOMAIN = os.environ.get("DOMAIN")
+PORT = int(os.environ.get("PORT", 7000))
+APP_SECRET = os.environ.get("APP_SECRET", "")
+X_FORWARDED: bool = bool_env(os.environ.get("X_FORWARDED", "false"))
+
+REDIS_URI = os.environ.get("REDIS_URI", "redis://localhost:6379")
+
+DISCOURSE_ENABLED = bool_env(os.environ.get("DISCOURSE_ENABLED", "true"))
+DISCOURSE_DOMAIN = os.environ.get("DISCOURSE_DOMAIN")
+DISCOURSE_USERNAME = os.environ.get("DISCOURSE_USERNAME", "system")
+DISCOURSE_API_KEY = os.environ.get("DISCOURSE_API_KEY")
+DISCOURSE_TOPIC_CATEGORY = int(os.environ.get("DISCOURSE_TOPIC_CATEGORY", -1))
+DISCOURSE_MAX_COMMENTS_PER_TOPIC = int(os.environ.get("DISCOURSE_MAX_COMMENTS_PER_TOPIC", '10'))
+
+DISCOURSE_TOPIC_TITLE = os.environ.get("DISCOURSE_TOPIC_TITLE", """
+FCS Proposal - {title}
+""".strip())
+DISCOURSE_TOPIC_BODY = os.environ.get("DISCOURSE_TOPIC_BODY", """
+A new proposal has been posted to the Firo Crowdfunding System.
+
+- Title: {title}
+- Author: {author}
+- Proposal type: {ptype}
+- Link: [click here]({link})
+
+Use this topic to discuss this proposal!
+""".strip())
+
+DB_HOST = os.environ.get("DB_HOST", "127.0.0.1")
+DB_PORT = int(os.environ.get("DB_PORT", "5432"))
+DB_NAME = os.environ.get("DB_NAME", "funding")
+DB_USER = os.environ.get("DB_USER", "")
+DB_PASSWD = os.environ.get("DB_PASSWD", "")
+
+COIN_NAME = os.environ.get("COIN_NAME", "").lower()
+COIN_RPC_PORT = os.environ.get("COIN_RPC_PORT", 18888)
+COIN_RPC_AUTH = os.environ.get("COIN_RPC_AUTH", None)
+
+VIEW_COUNTER = bool_env(os.environ.get("VIEW_COUNTER", 'true'))
+CAPTCHA_TTF = os.environ.get("CAPTCHA_TTF", "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf")
+
+OPENID_CFG = None
+# OPENID_CFG = {
+#     "client_id": "",
+#     "client_secret": "",
+#     "configuration": "https://login.mydomain.com/auth/realms/master/.well-known/openid-configuration"
+# }

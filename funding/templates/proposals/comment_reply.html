@@ -1,0 +1,46 @@
+{% extends "layouts/base.html" %}
+{% block title %} Add a comment reply {% endblock %}
+{% from 'proposals/comment.html' import comment_entry %}
+
+{% set proposal = comment.proposal %}
+
+{% block content %}
+<div class="body flex-grow-1 px-3">
+  <div class="container-fluid">
+
+    <div class="row row-header mb-3">
+      <div class="col-md-6">
+        <h4 class="mb-3">Replying to comment <a href="#"><small>'{{comment.uuid}}'</small></a></h4>
+
+        <form id="addCommentReply" onsubmit="return wow(event)" role="form" method="POST">
+          <input type="hidden" id="comment_uuid" name="comment_uuid" value="{{comment.uuid}}">
+
+          <div class="form-group mb-3">
+              <textarea id="content" class="textarea" name="markdown" placeholder="Place some (markdown) text here." style="width: 100%; height: 240px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">{{content}}</textarea>
+          </div>
+
+          <div class="form-group mb-3">
+              <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+<style>
+  .row-header small {
+    font-size: 16px;
+  }
+
+  .comment_area {
+    margin-left: 6px;
+  }
+</style>
+{% endblock content %}
+
+{% block javascripts %}
+<script>
+  const easyMDE = new EasyMDE({element: document.getElementById('content')});
+</script>
+{% endblock javascripts %}

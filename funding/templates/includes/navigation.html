@@ -1,0 +1,128 @@
+<header class="header {% if not root_page %}mb-4 {% endif %}header-sticky">
+  <div class="container-fluid">
+    <a href="{{ url_for('bp_routes.root') }}">
+      <img height="38px" alt="84" src="/static/fcs.png" class="px-md-0 me-md-3"/>
+    </a>
+
+    <ul class="header-nav ms-auto">
+      {% if not root_page %}
+      <li class="nav-item">
+        <a class="nav-link" href="/">Home</a>
+      </li>
+      {% endif %}
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('bp_routes.users_page') }}">Users</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('bp_routes.about') }}">About</a>
+      </li>
+    </ul>
+
+    {% if 1 == 2 %}
+      <ul class="header-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#">
+          <svg class="icon icon-lg">
+            <use xlink:href="/static/admin/vendors/@coreui/icons/svg/free.svg#cil-bell"></use>
+          </svg>
+        </a></li>
+        <li class="nav-item"><a class="nav-link" href="#">
+          <svg class="icon icon-lg">
+            <use xlink:href="/static/admin/vendors/@coreui/icons/svg/free.svg#cil-envelope-open"></use>
+          </svg>
+        </a></li>
+      </ul>
+    {% endif %}
+
+    {% if not user.is_anon %}
+      <ul class="header-nav ms-3">
+        <li class="nav-item dropdown"><a class="nav-link py-0" data-coreui-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+          <div class="avatar avatar-md"><img class="avatar-img" src="{{ url_for('bp_routes.utils_gravatar', hash=user.mail | hash_md5) }}" alt="user@email.com"></div>
+        </a>
+          <div class="dropdown-menu dropdown-menu-end pt-0">
+            <div class="dropdown-header bg-light py-2">
+              <div class="fw-semibold">My Account</div>
+            </div>
+
+            {% if 1 == 2 %}
+            <a class="dropdown-item" href="#">
+              <svg class="icon me-2">
+                <use xlink:href="/static/admin/vendors/@coreui/icons/svg/free.svg#cil-file"></use>
+              </svg>
+              Proposals<span class="badge badge-sm bg-primary ms-2">42</span>
+            </a>
+
+            <a class="dropdown-item" href="#">
+              <svg class="icon me-2">
+                <use xlink:href="/static/admin/vendors/@coreui/icons/svg/free.svg#cil-envelope-open"></use>
+              </svg>
+              Messages<span class="badge badge-sm bg-success ms-2">42</span>
+            </a>
+
+            <a class="dropdown-item" href="#">
+              <svg class="icon me-2">
+                <use xlink:href="/static/admin/vendors/@coreui/icons/svg/free.svg#cil-comment-square"></use>
+              </svg>
+              Comments<span class="badge badge-sm bg-warning ms-2">42</span>
+            </a>
+
+            <a class="dropdown-item" href="#">
+              <svg class="icon me-2">
+                <use xlink:href="/static/admin/vendors/@coreui/icons/svg/free.svg#cil-credit-card"></use>
+              </svg>
+              Payments<span class="badge badge-sm bg-secondary ms-2">42</span>
+            </a>
+
+            <div class="dropdown-header bg-light py-2">
+              <div class="fw-semibold">Settings</div>
+            </div>
+
+            <a class="dropdown-item" href="#">
+              <svg class="icon me-2">
+                <use xlink:href="/static/admin/vendors/@coreui/icons/svg/free.svg#cil-settings"></use>
+              </svg>
+              Settings
+            </a>
+
+            <div class="dropdown-divider"></div>
+            {% endif %}
+
+            <a class="dropdown-item" href="{{ url_for('bp_auth.logout') }}">
+              <svg class="icon me-2">
+                <use xlink:href="/static/admin/vendors/@coreui/icons/svg/free.svg#cil-account-logout"></use>
+              </svg>
+              Logout
+            </a>
+          </div>
+        </li>
+      </ul>
+    {% else %}
+      <ul class="header-nav d-none d-md-flex">
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('bp_auth.login') }}">Login</a></li>
+      </ul>
+    {% endif %}
+  </div>
+
+  {% if not root_page and crumbs %}
+  <!-- breadcrumbs -->
+  <div class="header-divider"></div>
+  <div class="container-fluid">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb my-0 ms-2">
+        {% for c in crumbs %}
+          {% set last = loop.index == crumbs|length %}
+
+          <li class="breadcrumb-item {% if last %} active {% endif %}">
+            <span>
+              {% if not last %}
+                <a href="{{c.url}}">{{c.name}}</a>
+              {% else %}
+                {{c.name}}
+              {% endif %}
+            </span>
+          </li>
+        {% endfor %}
+      </ol>
+    </nav>
+  </div>
+  {% endif %}
+</header>

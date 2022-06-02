@@ -1,0 +1,134 @@
+{% extends "layouts/base.html" %}
+{% block title %} Manage Funds {% endblock %}
+
+{% block content %}
+
+{% set txs_length = proposal.transactions | length %}
+
+<div class="body flex-grow-1 px-3">
+  <div class="container-lg">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for message in messages %}
+
+      <div class="alert alert-warning alert-dismissible fade show mt-3" role="alert">
+        {{message}}
+        <button class="btn-close" type="button" data-coreui-dismiss="alert" aria-label="Close"></button>
+      </div>
+
+      {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    {% if proposal.spent_remaining > 0 %}
+      {% if proposal.status.value <= ProposalStatus.funding_required.value %}
+      <div class="row">
+        <div class="col-md-6">
+          <div class="alert alert-warning mt-3" role="alert">
+            Warning: Generally speaking, funds are moved out once the proposal reaches, at a minimum,
+            the status of <b>Work in Progress</b>. However, the current proposal status is <b>{{ ProposalStatus.to_string(proposal.status) }}</b>.
+            Consider moving it to another status first <a href="{{ url_for('bp_proposals.edit', slug=proposal.slug) }}">here</a>.
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="row">
+
+        <div class="col-md-6">
+          <div class="card mb-4">
+            <div class="card-header">Transfer funds</div>
+            <div class="card-body">
+
+              <form class="mb-3" id="formProposal" role="form" method="POST" action="{{ url_for('bp_proposals.funds_transfer', slug=proposal.slug) }}">
+                <b>Funds available: {{ proposal.spent_remaining }}</b>
+                <br>
+                <br>
+
+                <div class="col-md-6">
+                  <div class="form-group mb-3">
+                    <label for="amount">Amount ({{ coin.ticker }})</label>
+                    <input step="any" id="amount" type="number" name="amount" class="form-control" placeholder="0.00" value="">
+                  </div>
+                </div>
+
+                <div class="form-group mb-3">
+                  <label for="destination">Destination address</label>
+                  <input id="destination" type="text" name="destination" class="form-control" placeholder="address..." value="{{proposal.addr_receiving or ''}}">
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <img style="margin-top: 10px;" class="mb-3 d-block" src="{{url_for('bp_routes.utils_captcha')}}"/>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="captcha">Captcha</label>
+                      <input id="captcha" type="text" name="captcha" class="form-control" placeholder="captca..." value="">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-12">
+                    <div class="alert alert-warning mb-3" role="alert">
+                      Make sure the payment details are correct!
+                    </div>
+
+                    <button class="btn float-end btn-dark px-4" type="submit">Transfer</button>
+                  </div>
+                </div>
+
+              </form>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="card card-transactions mb-4">
+            <div class="card-header">Transaction History</div>
+            <div class="card-body p-0">
+
+              {% from "includes/transactions.html" import tx_item with context %}
+              <div class="accordion" id="accordionTxs">
+
+                {% for tx in proposal.transactions %}
+                  {{ tx_item(tx) }}
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    {% else %}
+    <h3>Oof.</h3>
+    <div class="row">
+      <div class="alert alert-warning mt-3" role="alert">
+        No funds available.
+      </div>
+    </div>
+
+    {% endif %}
+    <div class="row">
+      <div class="col-md-12">
+
+        <a href="{{ url_for('bp_proposals.view', slug=proposal.slug) }}">
+          <button type="button" class="btn btn-success">
+            <svg class="icon">
+              <use xlink:href="/static/admin/vendors/@coreui/icons/svg/free.svg#cil-pencil"></use>
+            </svg>
+            Back to proposal
+          </button>
+        </a>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

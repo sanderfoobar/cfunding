@@ -1,0 +1,79 @@
+{% macro proposals_table(_proposals) %}
+
+<table class="table table-light table-proposals mb-0">
+  <thead class="table-light fw-semibold">
+    <tr class="align-middle">
+      <th class="text-center">
+        <svg class="icon">
+          <use xlink:href="/static/admin/vendors/@coreui/icons/svg/free.svg#cil-people"></use>
+        </svg>
+      </th>
+      <th>Proposal</th>
+      <th>Category</th>
+      <th>Status</th>
+      <th>Funding</th>
+      <th class="text-center">Activity</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    {% for p in _proposals %}
+      {% set url = url_for('bp_proposals.view', slug=p.slug) %}
+      {% set user_avatar = url_for('bp_routes.utils_gravatar', hash=p.user.mail | hash_md5) %}
+      {% set pct = p.raised_pct %}
+      {% set disabled = p.status == ProposalStatus.disabled %}
+      {% set status_txt = ProposalStatus.to_string(p.status.value) %}
+
+      <tr class="align-middle" style="opacity:{% if disabled %}50{% else %}100{% endif %}%">
+        <td class="text-center">
+          <a href="{{ url }}">
+            <div class="avatar avatar-md">
+              <img class="avatar-img" src="{{ user_avatar }}" alt="avatar">
+              <span class="avatar-status bg-success"></span>
+            </div>
+          </a>
+        </td>
+
+        <td>
+          <a href="{{ url }}">
+            <div><b>{{ p.title }}</b></div>
+            <div class="small text-medium-emphasis">
+              <span>By {{p.user.username}}</span> | Created: {{ p.created | dt_ago }}
+            </div>
+          </a>
+        </td>
+
+        <td>
+          <b>{{ status_txt }}</b>
+        </td>
+
+        <td>
+          <b>{{ ProposalCategory.to_string(p.category.value) }}</b>
+        </td>
+
+        <td>
+          <div class="clearfix">
+            <div class="float-start">
+              <div class="fw-semibold">{{pct}}%</div>
+            </div>
+
+            <div class="float-end">
+              <small class="text-medium-emphasis">{{p.raised.sum()}} {{ coin.ticker }} / {{p.funds_target}} {{ coin.ticker }}</small>
+            </div>
+          </div>
+
+          <div class="progress progress-thin">
+            <div class="progress-bar bg-success" role="progressbar" style="width: {{pct}}%" aria-valuenow="{{pct}}" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </td>
+
+        <td class="text-center">
+          <div class="small text-medium-emphasis">Last activity</div>
+          <div class="fw-semibold">{{ p.modified | dt_ago }}</div>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endmacro %}

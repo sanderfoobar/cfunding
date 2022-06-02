@@ -1,0 +1,16 @@
+<div class="write_comment">
+  {% if not user.is_anon %}
+  <div class="comment_box mb-4">
+    <form action="{{ url_for('bp_proposals_api.comment_add') }}" method="POST">
+      <input type="hidden" name="proposal_uuid" value="{{proposal.uuid}}">
+      <div class="mt-3 d-flex flex-row align-items-center form-color">
+          <img src="{{ url_for('bp_routes.utils_gravatar', hash=user.mail | hash_md5) }}" width="50" class="rounded-circle me-2">
+          <textarea id="markdownCommentEditor" name="markdown" type="text" class="form-control comment_area" placeholder="Enter your comment..."></textarea>
+      </div>
+
+      <button type="submit" style="margin-left:64px;" class="btn btn-comment btn-success">Post comment</button>
+    </form>
+  </div>
+  <hr>
+  {% endif %}
+</div>

@@ -1,0 +1,98 @@
+{% extends "layouts/base.html" %}
+{% block title %} Proposals {% endblock %}
+
+{% block content %}
+
+<div class="body flex-grow-1 px-3">
+  <div class="container-lg">
+
+    <div class="row mb-4">
+      <h3 class="mb-3">Users <small style="font-size: 16px;">({{ users | length }})</small> </h3>
+
+      <div class="col-sm-5 col-lg-5">
+
+        <table class="table table-light table-proposals mb-0">
+          <thead class="table-light fw-semibold">
+            <tr class="align-middle">
+              <th class="text-center">
+                <svg class="icon">
+                  <use xlink:href="/static/admin/vendors/@coreui/icons/svg/free.svg#cil-people"></use>
+                </svg>
+              </th>
+              <th>Username</th>
+              <th class="text-center">Proposals</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for u in users %}
+              {% set user_avatar = url_for('bp_routes.utils_gravatar', hash=u.mail | hash_md5) %}
+              {% set user_link = url_for('bp_routes.user_page', name=u.username) %}
+
+              <tr class="align-middle" style="opacity:{% if not u.enabled %}50{% else %}100{% endif %}%">
+
+                <td class="text-center">
+                  <a href="{{ user_link }}">
+                    <div class="avatar avatar-md">
+                      <img class="avatar-img" src="{{ user_avatar }}" alt="avatar">
+                      <span class="avatar-status bg-success"></span>
+                    </div>
+                  </a>
+                </td>
+
+                <td>
+                  <a href="{{ user_link }}">
+                    <div><b>{{ u.username }}</b></div>
+                    <div class="small text-medium-emphasis">
+                      {{ u.created | dt_human }}
+                    </div>
+                  </a>
+                </td>
+
+                <td class="text-center">
+                  <b>{{ u.proposals | length }}</b>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+
+    {% if other_proposals %}
+    <div class="row mb-4">
+      <div class="col-md-12">
+        <hr>
+        <h5>Other proposals</h5>
+        {{ proposals_table(_proposals=other_proposals) }}
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="row">
+      <div class="col-md-12">
+
+        <a href="{{ url_for('bp_routes.root') }}">
+          <button type="button" class="btn btn-success">
+            <svg class="icon">
+              <use xlink:href="/static/admin/vendors/@coreui/icons/svg/free.svg#cil-arrow-left"></use>
+            </svg>
+            Back to overview
+          </button>
+        </a>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script src="{{ url_for('static', filename='/admin/vendors/@coreui/utils/js/coreui-utils.js') }}"></script>
+<script src="{{ url_for('static', filename='/admin/js/main.js') }}"></script>
+
+{% endblock javascripts %}

@@ -1,0 +1,62 @@
+{% extends "layouts/base.html" %}
+{% block title %} Proposals {% endblock %}
+
+{% block content %}
+
+{% from "includes/proposals.html" import proposals_table with context %}
+<div class="body flex-grow-1 px-3">
+  <div class="container-lg">
+
+    <div class="row mb-4">
+      <h3 class="mb-3">{{ title }}</h3>
+
+      <div class="col-sm-12 col-lg-12">
+        {% if proposals %}
+          {{ proposals_table(_proposals=proposals) }}
+        {% else %}
+          <div class="card">
+            <div class="card-body">
+              No proposals yet!
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if other_proposals %}
+    <div class="row mb-4">
+      <div class="col-md-12">
+        <hr>
+        <h5>Other proposals</h5>
+        {{ proposals_table(_proposals=other_proposals) }}
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="row">
+      <div class="col-md-12">
+
+        <a href="{{ url_for('bp_routes.root') }}">
+          <button type="button" class="btn btn-success">
+            <svg class="icon">
+              <use xlink:href="/static/admin/vendors/@coreui/icons/svg/free.svg#cil-arrow-left"></use>
+            </svg>
+            Back to overview
+          </button>
+        </a>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script src="{{ url_for('static', filename='/admin/vendors/@coreui/utils/js/coreui-utils.js') }}"></script>
+<script src="{{ url_for('static', filename='/admin/js/main.js') }}"></script>
+
+{% endblock javascripts %}
